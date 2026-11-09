@@ -10,6 +10,7 @@ import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import {
   alternarComparacao,
+  lerComparacao,
   formatarArea,
   formatarPreco,
   ordenarTerrenos,
@@ -23,8 +24,12 @@ import { Link } from "@tanstack/react-router";
 
 export const Route = createFileRoute("/terrenos/")({
   validateSearch: (search: Record<string, unknown>) => {
-    const out: { comparar?: string; regiao?: string } = {};
-    if (typeof search["comparar"] === "string") out.comparar = search["comparar"];
+    const out: { comparar?: string | string[]; regiao?: string } = {};
+    const comparar = search["comparar"];
+    if (typeof comparar === "string") out.comparar = comparar;
+    else if (Array.isArray(comparar)) {
+      out.comparar = comparar.filter((id): id is string => typeof id === "string");
+    }
     if (typeof search["regiao"] === "string") out.regiao = search["regiao"];
     return out;
   },
@@ -65,20 +70,37 @@ const selectCls =
 
 function Catalogo() {
   const { terrenos, regioes } = Route.useLoaderData();
-  const { comparar: compararInicial, regiao: regiaoInicial } = Route.useSearch();
+  const search = Route.useSearch();
+  const navigate = Route.useNavigate();
   const precoMaxTotal = Math.max(0, ...terrenos.map((t) => t.preco));
   const [busca, setBusca] = useState("");
   const [status, setStatus] = useState<"todos" | StatusTerreno>("todos");
   const [precoMax, setPrecoMax] = useState(precoMaxTotal);
   const [areaMin, setAreaMin] = useState(0);
-  const [regiao, setRegiao] = useState(
-    regiaoInicial && regioes.some((r) => r.id === regiaoInicial) ? regiaoInicial : "todas",
-  );
+  const regiao = search.regiao && regioes.some((r) => r.id === search.regiao) ? search.regiao : "todas";
+  const setRegiao = (id: string) => {
+    void navigate({
+      search: (anterior) => {
+        const { regiao: _regiao, ...resto } = anterior;
+        return id === "todas" ? resto : { ...resto, regiao: id };
+      },
+      resetScroll: false,
+    });
+  };
   const [ordem, setOrdem] = useState<OrdemTerrenos>("padrao");
-  const [comparados, setComparados] = useState<string[]>(
-    compararInicial && terrenos.some((t) => t.id === compararInicial) ? [compararInicial] : [],
-  );
+  const comparados = lerComparacao(search.comparar, terrenos);
   const [aviso, setAviso] = useState("");
+  const setComparados = (atualizar: (ids: string[]) => string[]) => {
+    setAviso("");
+    void navigate({
+      search: (anterior) => {
+        const { comparar: _comparar, ...resto } = anterior;
+        const ids = atualizar(lerComparacao(anterior.comparar, terrenos));
+        return ids.length ? { ...resto, comparar: ids } : resto;
+      },
+      resetScroll: false,
+    });
+  };
   const comparacao = terrenos.filter((t) => comparados.includes(t.id));
 
   const filtrados = useMemo(
@@ -102,7 +124,7 @@ function Catalogo() {
       return;
     }
     setAviso("");
-    setComparados(depois);
+    setComparados((ids) => alternarComparacao(ids, id));
   };
 
   return (
@@ -199,7 +221,7 @@ function Catalogo() {
           <section className="mt-12 border-t border-border pt-8" aria-label="Comparação de terrenos">
             <div className="mb-5 flex items-center justify-between gap-3">
               <h2 className="text-2xl font-semibold">Comparação · {comparacao.length} de {MAX_COMPARACAO}</h2>
-              <Button variant="ghost" onClick={() => setComparados([])}><X /> Limpar comparação</Button>
+              <Button variant="ghost" onClick={() => setComparados(() => [])}><X /> Limpar comparação</Button>
             </div>
             <div className="overflow-x-auto">
               <table className="w-full min-w-[760px] text-left text-sm">

@@ -211,6 +211,14 @@ export function ordenarTerrenos(terrenos: Terreno[], ordem: OrdemTerrenos): Terr
 
 export const MAX_COMPARACAO = 3;
 
+/** Aceita o link individual dos detalhes e listas da URL, usando apenas IDs atuais. */
+export function lerComparacao(valor: unknown, terrenos: Pick<Terreno, "id">[]): string[] {
+  const candidatos = typeof valor === "string" ? [valor] : Array.isArray(valor) ? valor : [];
+  const validos = new Set(terrenos.map((terreno) => terreno.id));
+  const ids = candidatos.filter((id): id is string => typeof id === "string" && validos.has(id));
+  return [...new Set(ids)].slice(0, MAX_COMPARACAO);
+}
+
 /** Adiciona ou remove um terreno da comparação, sem ultrapassar o limite. */
 export function alternarComparacao(ids: string[], id: string, max = MAX_COMPARACAO): string[] {
   if (ids.includes(id)) return ids.filter((i) => i !== id);
