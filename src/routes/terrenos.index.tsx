@@ -1,7 +1,8 @@
 import { listarRegioesBanco } from "@/functions/regioes";
 import { createFileRoute } from "@tanstack/react-router";
 import { listarTerrenosBanco } from "@/functions/terrenos";
-import { useMemo, useState } from "react";
+import { useMemo, useRef, useState } from "react";
+import { useReducedMotion } from "@/hooks/use-reduced-motion";
 import { ArrowUpDown, Columns2, Search, SearchX, X } from "lucide-react";
 import { filtrarTerrenos } from "@/data/regioes";
 import { ExploracaoSection } from "@/components/exploration/ExploracaoSection";
@@ -72,6 +73,8 @@ function Catalogo() {
   const { terrenos, regioes } = Route.useLoaderData();
   const search = Route.useSearch();
   const navigate = Route.useNavigate();
+  const tabelaComparacao = useRef<HTMLElement>(null);
+  const reducedMotion = useReducedMotion();
   const precoMaxTotal = Math.max(0, ...terrenos.map((t) => t.preco));
   const [busca, setBusca] = useState("");
   const [status, setStatus] = useState<"todos" | StatusTerreno>("todos");
@@ -102,6 +105,13 @@ function Catalogo() {
     });
   };
   const comparacao = terrenos.filter((t) => comparados.includes(t.id));
+  const verComparacao = () => {
+    tabelaComparacao.current?.scrollIntoView({
+      behavior: reducedMotion ? "instant" : "smooth",
+      block: "start",
+    });
+    tabelaComparacao.current?.focus({ preventScroll: true });
+  };
 
   const filtrados = useMemo(
     () => ordenarTerrenos(filtrarTerrenos(terrenos, { busca, status, precoMax, areaMin, regiao }), ordem),
@@ -195,6 +205,26 @@ function Catalogo() {
           <Button variant="link" size="sm" onClick={limpar}>Limpar filtros</Button>
         </div>
 
+        {comparacao.length > 0 && (
+          <aside
+            aria-label="Seleção para comparação"
+            className="sticky top-20 z-30 mt-6 flex flex-col gap-3 rounded-xl border border-copper/40 bg-background p-4 shadow-lg sm:flex-row sm:items-center sm:justify-between"
+          >
+            <p className="flex items-center gap-2 text-sm font-medium" role="status" aria-live="polite">
+              <Columns2 className="h-4 w-4 shrink-0 text-copper" aria-hidden />
+              {comparacao.length} de {MAX_COMPARACAO} terrenos selecionados
+            </p>
+            <div className="flex flex-wrap gap-2">
+              <Button variant="hero" className="flex-1 sm:flex-none" aria-controls="comparacao-terrenos" onClick={verComparacao}>
+                Ver comparação
+              </Button>
+              <Button variant="glass" className="flex-1 sm:flex-none" aria-label="Limpar seleção de comparação" onClick={() => setComparados(() => [])}>
+                <X aria-hidden /> Limpar
+              </Button>
+            </div>
+          </aside>
+        )}
+
         {filtrados.length === 0 ? (
           <div className="mt-10 flex flex-col items-center rounded-xl border border-dashed border-border py-20 text-center">
             <SearchX className="h-10 w-10 text-muted-foreground" aria-hidden />
@@ -218,8 +248,8 @@ function Catalogo() {
         <p className="mt-3 text-sm text-warning" role="status" aria-live="polite">{aviso}</p>
 
         {comparacao.length > 0 && (
-          <section className="mt-12 border-t border-border pt-8" aria-label="Comparação de terrenos">
-            <div className="mb-5 flex items-center justify-between gap-3">
+          <section id="comparacao-terrenos" ref={tabelaComparacao} tabIndex={-1} className="mt-12 scroll-mt-64 border-t border-border pt-8 focus-visible:outline focus-visible:outline-2 focus-visible:outline-copper sm:scroll-mt-48" aria-label="Comparação de terrenos">
+            <div className="mb-5 flex flex-wrap items-center justify-between gap-3">
               <h2 className="text-2xl font-semibold">Comparação · {comparacao.length} de {MAX_COMPARACAO}</h2>
               <Button variant="ghost" onClick={() => setComparados(() => [])}><X /> Limpar comparação</Button>
             </div>

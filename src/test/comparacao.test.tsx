@@ -42,16 +42,19 @@ const regioes = [
   },
 ];
 
-afterEach(cleanup);
+afterEach(() => {
+  cleanup();
+  vi.restoreAllMocks();
+});
 
-async function abrir(url = "/terrenos/") {
+async function abrir(url = "/terrenos/", lotes = terrenos) {
   // Use the actual page components/search validation, replacing only database loaders.
   const root = createRootRoute({ component: Outlet });
   const lista = createRoute({
     getParentRoute: () => root,
     path: "/terrenos/",
     validateSearch: catalogo.options.validateSearch!,
-    loader: () => ({ terrenos, regioes }),
+    loader: () => ({ terrenos: lotes, regioes }),
     component: catalogo.options.component!,
   });
   const item = createRoute({
@@ -81,6 +84,59 @@ function selecao() {
 }
 
 describe("Comparação pela URL", () => {
+  it("mostra a barra ao selecionar, mantém ao filtrar e oculta ao limpar", async () => {
+    const { router } = await abrir("/terrenos/?regiao=jezero");
+    expect(screen.queryByRole("complementary", { name: "Seleção para comparação" })).not.toBeInTheDocument();
+    fireEvent.click(screen.getByRole("button", { name: "Comparar Lote a" }));
+    const barra = await screen.findByRole("complementary", { name: "Seleção para comparação" });
+    expect(within(barra).getByRole("status")).toHaveTextContent("1 de 3 terrenos selecionados");
+    fireEvent.click(screen.getByRole("button", { name: "Comparar Lote b" }));
+    await waitFor(() => expect(within(barra).getByRole("status")).toHaveTextContent("2 de 3"));
+    fireEvent.change(screen.getByRole("textbox", { name: "Pesquisar por nome" }), { target: { value: "nenhum" } });
+    expect(screen.getByText("Nenhum terreno encontrado")).toBeInTheDocument();
+    expect(barra).toBeInTheDocument();
+    expect(selecao()).toEqual(["Lote a", "Lote b"]);
+    fireEvent.click(within(barra).getByRole("button", { name: "Limpar seleção de comparação" }));
+    await waitFor(() => expect(screen.queryByRole("complementary", { name: "Seleção para comparação" })).not.toBeInTheDocument());
+    expect(selecao()).toEqual([]);
+    expect(router.state.location.search).toEqual({ regiao: "jezero" });
+  });
+
+  it.each([false, true])("rola até a tabela e transfere foco (movimento reduzido: %s)", async (reduced) => {
+    const originalMatchMedia = window.matchMedia;
+    vi.spyOn(window, "matchMedia").mockImplementation((query) => ({
+      ...originalMatchMedia(query), matches: reduced,
+    }));
+    const scrollIntoView = vi.fn();
+    const previous = Object.getOwnPropertyDescriptor(HTMLElement.prototype, "scrollIntoView");
+    Object.defineProperty(HTMLElement.prototype, "scrollIntoView", { configurable: true, value: scrollIntoView });
+    try {
+      await abrir("/terrenos/?comparar=a");
+      const tabela = screen.getByRole("region", { name: "Comparação de terrenos" });
+      fireEvent.click(screen.getByRole("button", { name: "Ver comparação" }));
+      expect(scrollIntoView).toHaveBeenCalledWith({ behavior: reduced ? "instant" : "smooth", block: "start" });
+      expect(scrollIntoView.mock.contexts[0]).toBe(tabela);
+      expect(tabela).toHaveFocus();
+    } finally {
+      if (previous) Object.defineProperty(HTMLElement.prototype, "scrollIntoView", previous);
+      else Reflect.deleteProperty(HTMLElement.prototype, "scrollIntoView");
+    }
+  });
+
+  it("renderiza a tabela com os três IDs da URL JSON codificada relatada", async () => {
+    const ids = ["estacao-hellas", "borda-de-jezero", "encosta-olympus"];
+    const lotes = ids.map((id, index) => ({ ...terrenos[index]!, id }));
+    await abrir(
+      "/terrenos?comparar=%5B%22estacao-hellas%22%2C%22borda-de-jezero%22%2C%22encosta-olympus%22%5D",
+      lotes,
+    );
+    expect(selecao()).toEqual(["Lote a", "Lote b", "Lote c"]);
+    const tabela = screen.getByRole("table");
+    for (const id of ids) {
+      expect(tabela.querySelector(`a[href="/terrenos/${id}"]`)).toBeInTheDocument();
+    }
+  });
+
   it("normaliza IDs duplicados, inexistentes e entradas inválidas com limite de três", () => {
     expect(lerComparacao(["inexistente", "a", "a", 1, "b", "c", "d"], terrenos)).toEqual([
       "a",
