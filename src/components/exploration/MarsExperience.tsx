@@ -38,7 +38,7 @@ export function MarsExperience({ terrenos, regioes }: { terrenos: Terreno[]; reg
   }, []);
   function select(id: string) { setSelected(id); setExploring(true); }
   return <>
-    <section ref={section} className="mission-opening relative overflow-hidden border-b border-border" aria-label="Exploração de Marte">
+    <section ref={section} className="mission-opening relative isolate overflow-hidden border-b border-border" aria-label="Exploração de Marte">
       <div className={`absolute inset-x-0 top-16 h-[350px] transition-all duration-700 md:bottom-0 md:top-0 md:h-auto ${exploring ? '' : 'md:left-[27%]'}`}>
         <ClientOnly fallback={<PlanetFallback />}><GlobeBoundary><Suspense fallback={<PlanetFallback />}><MarsGlobe regioes={regioes} selected={selected} onSelect={select} paused={paused} zoom={zoom} active={visible} /></Suspense></GlobeBoundary></ClientOnly>
       </div>

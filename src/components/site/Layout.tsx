@@ -1,6 +1,7 @@
 import type { ReactNode } from "react";
 import { Header } from "./Header";
 import { Footer } from "./Footer";
+import { ChatTerrenos } from "@/components/chat/ChatTerrenos";
 
 export function PageHeader({ eyebrow, title, children }: { eyebrow: string; title: string; children?: ReactNode }) {
   return (
@@ -21,6 +22,7 @@ export function SiteShell({ children }: { children: ReactNode }) {
       <Header />
       <main id="conteudo">{children}</main>
       <Footer />
+      <ChatTerrenos />
     </>
   );
 }

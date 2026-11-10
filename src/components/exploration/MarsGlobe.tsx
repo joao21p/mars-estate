@@ -44,7 +44,7 @@ function Planet({ regioes, selected, onSelect, paused, zoom, active, colors, red
       <sphereGeometry args={[2, 64, 48]} />
       <meshStandardMaterial map={texture} bumpMap={texture} bumpScale={.035} roughness={.94} metalness={.04} />
     </mesh>
-    {active && regioes.map((r) => <Html key={r.id} position={coordinates(r.latitude, r.longitude).multiplyScalar(2.06)} center occlude distanceFactor={5}>
+    {active && regioes.map((r) => <Html key={r.id} position={coordinates(r.latitude, r.longitude).multiplyScalar(2.06)} center occlude distanceFactor={5} zIndexRange={[10, 0]}>
       <Button variant="ghost" size="icon" className="planet-marker" aria-label={`Selecionar ${r.nome}`} title={r.nome} aria-pressed={selected === r.id} onClick={(e) => { e.stopPropagation(); onSelect(r.id); }} />
     </Html>)}
     <OrbitControls ref={controls} enablePan={false} minDistance={4.8} maxDistance={10} zoomSpeed={.5} rotateSpeed={.45} autoRotate={!paused && !reduced && !selected} autoRotateSpeed={.3} enableDamping dampingFactor={.08} onStart={() => { target.current = null; }} />
@@ -59,7 +59,8 @@ export default function MarsGlobe(props: Props) {
     setColors({ light: css.getPropertyValue('--scene-light').trim(), fill: css.getPropertyValue('--scene-fill').trim(), marker: css.getPropertyValue('--scene-marker').trim(), selected: css.getPropertyValue('--scene-selected').trim() });
   }, []);
   if (!colors) return null;
-  return <Canvas dpr={[1, 1.5]} camera={{ position: [0, .3, 7.7], fov: 38 }} gl={{ antialias: true, alpha: true }} frameloop={reduced || !props.active ? 'demand' : 'always'} aria-label="Globo interativo de Marte">
+  // Drei mounts Html beside the canvas; contain its depth-based z-index here.
+  return <Canvas style={{ isolation: 'isolate' }} dpr={[1, 1.5]} camera={{ position: [0, .3, 7.7], fov: 38 }} gl={{ antialias: true, alpha: true }} frameloop={reduced || !props.active ? 'demand' : 'always'} aria-label="Globo interativo de Marte">
     <Suspense fallback={null}><Planet {...props} colors={colors} reduced={reduced} /></Suspense>
   </Canvas>;
 }
