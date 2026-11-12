@@ -38,6 +38,8 @@ export const listarTerrenosBanco = createServerFn({
   const { setResponseHeader } = await import('@tanstack/react-start/server');
   setResponseHeader('Cache-Control', 'no-store');
   const { pool } = await import("../server/db");
+  const { runDatabaseOperation } = await import("../server/db-diagnostics");
+  return runDatabaseOperation("catalog.plots", async () => {
   const { plotStatusSql } = await import('../server/reservation-schema');
   const statusSql = await plotStatusSql(pool);
 
@@ -73,6 +75,7 @@ export const listarTerrenosBanco = createServerFn({
   `);
 
   return resultado.rows.map(converterTerreno);
+  });
 });
 
 // Busca apenas um terreno pelo seu ID
@@ -84,6 +87,8 @@ export const obterTerrenoBanco = createServerFn({
     const { setResponseHeader } = await import('@tanstack/react-start/server');
     setResponseHeader('Cache-Control', 'no-store');
     const { pool } = await import("../server/db");
+    const { runDatabaseOperation } = await import("../server/db-diagnostics");
+    return runDatabaseOperation("catalog.plot", async () => {
     const { plotStatusSql } = await import('../server/reservation-schema');
     const statusSql = await plotStatusSql(pool);
 
@@ -124,4 +129,5 @@ export const obterTerrenoBanco = createServerFn({
     const terreno = resultado.rows[0];
 
     return terreno ? converterTerreno(terreno) : null;
+    });
   });

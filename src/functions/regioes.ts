@@ -6,7 +6,9 @@ export const listarRegioesBanco = createServerFn({
   method: "GET",
 }).handler(async (): Promise<Regiao[]> => {
   const { pool } = await import("../server/db");
+  const { runDatabaseOperation } = await import("../server/db-diagnostics");
 
+  return runDatabaseOperation("catalog.regions", async () => {
   const resultado = await pool.query<Regiao>(`
     SELECT
       r.id,
@@ -32,4 +34,5 @@ export const listarRegioesBanco = createServerFn({
   `);
 
   return resultado.rows;
+  });
 });
