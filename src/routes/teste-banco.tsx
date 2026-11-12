@@ -2,6 +2,7 @@ import { createFileRoute } from "@tanstack/react-router";
 import { listarTerrenosBanco } from "../functions/terrenos";
 
 export const Route = createFileRoute("/teste-banco")({
+  head: () => ({ meta: [{ title: 'Diagnóstico do catálogo | Mars Estate' }, { name: 'robots', content: 'noindex, nofollow' }] }),
   loader: async () => {
     return await listarTerrenosBanco();
   },

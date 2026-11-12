@@ -6,10 +6,12 @@ import { formatarArea, formatarPreco } from "@/data/terrenos";
 import { obterTerrenoBanco } from "@/functions/terrenos";
 import { StatusBadge } from "@/components/site/StatusBadge";
 import { InteresseDialog } from "@/components/site/InteresseDialog";
+import { ReservationDialog } from '@/components/site/ReservationDialog';
 import { TagDado } from "@/components/site/TagDado";
 import { cn } from "@/lib/utils";
 import { listarRegioesBanco } from "@/functions/regioes";
 import { formatarCoordenadas, regiaoDoTerreno } from "@/data/regioes";
+import { siteMetadata } from '@/lib/site-metadata';
 
 export const Route = createFileRoute("/terrenos/$id")({
   loader: async ({ params }) => {
@@ -24,15 +26,8 @@ export const Route = createFileRoute("/terrenos/$id")({
   },
   head: ({ loaderData }) => ({
     meta: loaderData
-      ? [
-          { title: `${loaderData.terreno.nome} — Mars Estate` },
-          { name: "description", content: loaderData.terreno.descricao },
-          { property: "og:title", content: `${loaderData.terreno.nome} — Mars Estate` },
-          { property: "og:description", content: loaderData.terreno.descricao },
-          { property: "og:type", content: "website" },
-          { name: "twitter:card", content: "summary_large_image" },
-        ]
-      : [{ title: "Terreno não encontrado — Mars Estate" }, { name: "robots", content: "noindex" }],
+      ? siteMetadata(`${loaderData.terreno.nome} | Mars Estate`, `Explore ${loaderData.terreno.nome}, um terreno fictício do Mars Estate. Compare paisagens e características nesta simulação, sem propriedade real.`, `/terrenos/${encodeURIComponent(loaderData.terreno.id)}`)
+      : [...siteMetadata('Terreno não encontrado | Mars Estate', 'Este terreno não foi encontrado no catálogo fictício do Mars Estate.'), { name: "robots", content: "noindex" }],
   }),
   pendingComponent: () => (
     <div className="mx-auto max-w-7xl px-5 pb-24 pt-32" role="status" aria-label="Carregando terreno">
@@ -131,6 +126,7 @@ function Detalhe() {
             </div>
           )}
           <div className="space-y-3">
+            <ReservationDialog id={t.id} nome={t.nome} available={t.status === 'disponivel'} />
             <InteresseDialog nome={t.nome} disabled={t.status === "vendido"} />
             <Button asChild variant="glass" size="lg" className="w-full">
               <Link to="/terrenos" search={{ comparar: t.id }}><Columns2 /> Comparar com outros terrenos</Link>

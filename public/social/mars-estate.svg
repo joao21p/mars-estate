@@ -1,0 +1,23 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="630" viewBox="0 0 1200 630">
+  <title>Mars Estate | Explore o impossível</title>
+  <rect width="1200" height="630" fill="#111014"/>
+  <path d="M40 40H1160V590H40Z" fill="none" stroke="#3a2d28"/>
+  <g font-family="Arial, sans-serif">
+    <text x="80" y="107" font-size="18" fill="#d79b73">MARS ESTATE / CADERNO DE EXPLORAÇÃO</text>
+    <text x="80" y="253" font-size="66" fill="#f1e9df">Explore o</text>
+    <text x="80" y="344" font-size="78" font-weight="700" fill="#edb98d">impossível.</text>
+    <text x="80" y="416" font-size="23" fill="#b9ada4">Uma plataforma fictícia para explorar Marte</text>
+    <text x="80" y="448" font-size="23" fill="#b9ada4">e comparar novos horizontes.</text>
+    <text x="80" y="554" font-size="17" fill="#b9ada4">PROJETO DE PORTFÓLIO</text>
+    <text x="948" y="554" font-size="17" fill="#d79b73">SIMULAÇÃO / 01</text>
+  </g>
+  <path d="M80 500H1120" stroke="#3a2d28"/>
+  <g transform="translate(816 182) scale(4.5)">
+  <rect width="64" height="64" rx="14" fill="#111014"/>
+  <ellipse cx="32" cy="32" rx="28" ry="10" transform="rotate(-25 32 32)" fill="none" stroke="#805039" stroke-width="2.5"/>
+  <circle cx="32" cy="32" r="17" fill="#cc8053"/>
+  <circle cx="26" cy="27" r="4" fill="#b36544"/>
+  <circle cx="37" cy="38" r="5" fill="#b36544"/>
+  <path d="M4 32 A28 10 0 0 0 60 32" transform="rotate(-25 32 32)" fill="none" stroke="#edb98d" stroke-width="3" stroke-linecap="round"/>
+  </g>
+</svg>

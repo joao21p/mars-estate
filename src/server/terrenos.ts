@@ -1,9 +1,11 @@
 import { createServerFn } from "@tanstack/react-start";
 import { pool } from "./db";
+import { plotStatusSql } from './reservation-schema';
 
 export const listarTerrenosBanco = createServerFn({
   method: "GET",
 }).handler(async () => {
+  const statusSql = await plotStatusSql(pool);
   const resultado = await pool.query(`
     SELECT
       p.id,
@@ -11,7 +13,7 @@ export const listarTerrenosBanco = createServerFn({
       p.region_id,
       p.area,
       p.price,
-      p.status,
+      ${statusSql} AS status,
       p.description,
 
       COALESCE(

@@ -3,17 +3,11 @@ import { Compass, Eye, FlaskConical, Info, Lightbulb, Accessibility, Rocket, Tar
 import { Button } from "@/components/ui/button";
 import { Reveal } from "@/components/site/Reveal";
 import valley from "@/assets/valley.jpg";
+import { siteMetadata } from '@/lib/site-metadata';
 
 export const Route = createFileRoute("/sobre")({
   head: () => ({
-    meta: [
-      { title: "Sobre Nós — Mars Estate" },
-      { name: "description", content: "Conheça a história, a missão e os princípios do Mars Estate, uma experiência digital conceitual sobre Marte." },
-      { property: "og:title", content: "Sobre Nós — Mars Estate" },
-      { property: "og:description", content: "Curiosidade científica, transparência e imaginação para explorar Marte de uma nova perspectiva." },
-      { property: "og:type", content: "website" },
-      { name: "twitter:card", content: "summary_large_image" },
-    ],
+    meta: siteMetadata('Sobre o projeto | Mars Estate', 'Ciência, design e tecnologia se encontram no Mars Estate, um projeto demonstrativo de portfólio sobre exploração e comparação de terrenos fictícios em Marte.', '/sobre'),
   }),
   component: Sobre,
 });

@@ -2,6 +2,7 @@ import { Link } from "@tanstack/react-router";
 import { useState } from "react";
 import { Menu, X } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import { AuthControls } from "@/components/auth/AuthControls";
 
 const links = [
   { to: "/terrenos", label: "Explorar Terrenos" },
@@ -12,7 +13,7 @@ const links = [
 export function Logo() {
   return (
     <Link to="/" className="flex items-center gap-2 font-display text-lg font-bold">
-      <span aria-hidden className="h-6 w-6 rounded-full bg-gradient-mars shadow-glow" />
+      <img src="/favicon.svg" alt="" width={32} height={32} className="h-8 w-8 shrink-0" />
       Mars Estate
     </Link>
   );
@@ -24,7 +25,7 @@ export function Header() {
     <header className="fixed inset-x-0 top-0 z-50 border-b border-border bg-background/70 backdrop-blur-lg">
       <div className="mx-auto flex h-16 max-w-7xl items-center justify-between px-5">
         <Logo />
-        <nav aria-label="Principal" className="hidden items-center gap-8 md:flex">
+        <nav aria-label="Principal" className="hidden items-center gap-8 lg:flex">
           {links.map((l) => (
             <Link
               key={l.to}
@@ -36,13 +37,11 @@ export function Header() {
             </Link>
           ))}
         </nav>
-        <div className="hidden md:block">
-          <Button asChild variant="hero" size="sm">
-            <Link to="/terrenos">Explorar Terrenos</Link>
-          </Button>
+        <div className="hidden lg:block">
+          <AuthControls />
         </div>
         <Button variant="ghost" size="icon"
-          className="rounded-md p-2 md:hidden"
+          className="rounded-md p-2 lg:hidden"
           aria-label={open ? "Fechar menu" : "Abrir menu"}
           aria-expanded={open}
           onClick={() => setOpen(!open)}
@@ -51,7 +50,7 @@ export function Header() {
         </Button>
       </div>
       {open && (
-        <nav aria-label="Menu móvel" className="border-t border-border bg-background px-5 py-4 md:hidden">
+        <nav aria-label="Menu móvel" className="border-t border-border bg-background px-5 py-4 lg:hidden">
           <ul className="flex flex-col gap-4">
             {links.map((l) => (
               <li key={l.to}>
@@ -61,6 +60,7 @@ export function Header() {
               </li>
             ))}
           </ul>
+          <div className="mt-5"><AuthControls /></div>
         </nav>
       )}
     </header>

@@ -35,7 +35,11 @@ function converterTerreno(terreno: TerrenoBanco): Terreno {
 export const listarTerrenosBanco = createServerFn({
   method: "GET",
 }).handler(async () => {
+  const { setResponseHeader } = await import('@tanstack/react-start/server');
+  setResponseHeader('Cache-Control', 'no-store');
   const { pool } = await import("../server/db");
+  const { plotStatusSql } = await import('../server/reservation-schema');
+  const statusSql = await plotStatusSql(pool);
 
   const resultado = await pool.query<TerrenoBanco>(`
     SELECT
@@ -45,7 +49,7 @@ export const listarTerrenosBanco = createServerFn({
       COALESCE(r.name, p.region_id) AS region_name,
       p.area,
       p.price,
-      p.status,
+      ${statusSql} AS status,
       p.description,
       COALESCE(
         (
@@ -75,9 +79,13 @@ export const listarTerrenosBanco = createServerFn({
 export const obterTerrenoBanco = createServerFn({
   method: "GET",
 })
-  .inputValidator(z.string().min(1))
+  .validator(z.string().min(1))
   .handler(async ({ data: id }) => {
+    const { setResponseHeader } = await import('@tanstack/react-start/server');
+    setResponseHeader('Cache-Control', 'no-store');
     const { pool } = await import("../server/db");
+    const { plotStatusSql } = await import('../server/reservation-schema');
+    const statusSql = await plotStatusSql(pool);
 
     const resultado = await pool.query<TerrenoBanco>(
       `
@@ -88,7 +96,7 @@ export const obterTerrenoBanco = createServerFn({
         COALESCE(r.name, p.region_id) AS region_name,
         p.area,
         p.price,
-        p.status,
+        ${statusSql} AS status,
         p.description,
         COALESCE(
           (

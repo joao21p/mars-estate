@@ -9,7 +9,6 @@ import {
   DialogTitle,
   DialogTrigger,
 } from "@/components/ui/dialog";
-import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 
@@ -26,7 +25,7 @@ export function InteresseDialog({ nome, disabled }: { nome: string; disabled?: b
         <DialogHeader>
           <DialogTitle className="font-display">Interesse em {nome}</DialogTitle>
           <DialogDescription>
-            Formulário demonstrativo. Nenhum dado é enviado e nenhuma compra é realizada.
+            Prévia de mensagem, sem envio ou armazenamento. Para reservar na simulação, use “Reservar terreno” nos detalhes. Este formulário não cria conta nem reserva.
           </DialogDescription>
         </DialogHeader>
         {enviado ? (
@@ -45,19 +44,11 @@ export function InteresseDialog({ nome, disabled }: { nome: string; disabled?: b
             }}
           >
             <div className="space-y-2">
-              <Label htmlFor="nome">Nome</Label>
-              <Input id="nome" required autoComplete="name" />
-            </div>
-            <div className="space-y-2">
-              <Label htmlFor="email">E-mail</Label>
-              <Input id="email" type="email" required autoComplete="email" />
-            </div>
-            <div className="space-y-2">
-              <Label htmlFor="msg">Mensagem (opcional)</Label>
-              <Textarea id="msg" rows={3} />
+              <Label htmlFor="msg">Mensagem de exemplo (opcional)</Label>
+              <Textarea id="msg" rows={3} maxLength={1000} placeholder="O que você gostaria de saber sobre este terreno?" />
             </div>
             <Button type="submit" variant="hero" className="w-full">
-              Registrar interesse
+              Simular mensagem — não envia
             </Button>
           </form>
         )}

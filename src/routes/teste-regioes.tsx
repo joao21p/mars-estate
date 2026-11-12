@@ -3,6 +3,7 @@ import { createFileRoute } from "@tanstack/react-router";
 import { listarRegioesBanco } from "../functions/regioes";
 
 export const Route = createFileRoute("/teste-regioes")({
+  head: () => ({ meta: [{ title: 'Diagnóstico de regiões | Mars Estate' }, { name: 'robots', content: 'noindex, nofollow' }] }),
   loader: () => listarRegioesBanco(),
   component: TesteRegioes,
 });

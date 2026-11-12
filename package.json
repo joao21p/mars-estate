@@ -3,11 +3,17 @@
   "private": true,
   "sideEffects": false,
   "type": "module",
+  "engines": {
+    "node": "24.x"
+  },
   "scripts": {
     "dev": "vite dev",
     "build": "vite build",
+    "build:local": "vite build --mode node",
     "build:dev": "vite build --mode development",
-    "preview": "vite preview",
+    "preview": "node --env-file-if-exists=.env scripts/preview.mjs",
+    "audit:publication": "node scripts/audit-publication.mjs",
+    "audit:github": "node scripts/audit-github.mjs",
     "lint": "eslint .",
     "format": "prettier --write .",
     "test": "vitest run",
@@ -17,6 +23,7 @@
     "rolldown": "1.2.1"
   },
   "dependencies": {
+    "@google/genai": "^3.0.0",
     "@hookform/resolvers": "^5.2.2",
     "@radix-ui/react-accordion": "^1.2.12",
     "@radix-ui/react-alert-dialog": "^1.1.15",

@@ -32,7 +32,7 @@ Mars Estate é um projeto de portfólio que simula a descoberta e a comparação
 | Desenvolvimento e build | Vite 8, configuração integrada do Lovable e Nitro no build |
 | Testes e qualidade | Vitest, jsdom, Testing Library no ambiente de testes, ESLint e Prettier |
 
-O projeto foi iniciado com Lovable. A presença de ferramentas de build não significa que exista uma implantação de produção documentada ou validada neste repositório.
+O projeto foi iniciado com Lovable. A preparação para Vercel, variáveis de ambiente, PostgreSQL gerenciado, evidências locais e etapas de homologação estão no [guia de publicação](docs/publicacao-vercel.md). Nenhum deploy foi realizado nesta preparação.
 
 ## Arquitetura e organização
 
@@ -96,7 +96,7 @@ As consultas esperam as seguintes tabelas e colunas:
 
 Essa relação descreve o contrato observado nas consultas, não um script de criação do banco. Os status utilizados pela interface são `disponivel`, `reservado` e `vendido`; os identificadores de região dos terrenos devem corresponder aos de `regions`. Os caminhos de imagens devem apontar para recursos disponíveis na aplicação ou URLs acessíveis.
 
-**Não há scripts SQL, migrations, seed ou dump versionados para criar e popular o banco.** Para reproduzir o catálogo atual, é necessário obter uma exportação do banco existente ou preparar manualmente uma base compatível com as consultas. Instalar as dependências ou iniciar a aplicação não cria essas tabelas nem importa os dados simulados.
+Há migrações de autenticação e reservas em `migrations/`, mas não há seed ou provisionamento completo do catálogo. Para reproduzir o catálogo atual, prepare uma base compatível com as consultas e dados sanitizados, fora do repositório. Instalar as dependências ou iniciar a aplicação não cria essas tabelas nem importa os dados simulados. Consulte o [guia de publicação](docs/publicacao-vercel.md) antes de conectar um banco gerenciado.
 
 **O banco PostgreSQL local não é enviado automaticamente ao GitHub.** O Git versiona os arquivos adicionados ao repositório, não o serviço PostgreSQL nem seus registros. Clonar o projeto não copia o banco de outra máquina; uma transferência exige exportação e importação separadas. O arquivo `.env` também é ignorado pelo Git e não deve ser publicado com credenciais.
 
@@ -104,7 +104,7 @@ Essa relação descreve o contrato observado nas consultas, não um script de cr
 
 ### 1. Pré-requisitos
 
-- Node.js 22.12 ou superior, com npm, para o fluxo descrito abaixo.
+- Node.js 24.x, com npm, para o build e runtime alinhados à Vercel.
 - PostgreSQL em execução e um banco acessível, com as tabelas e os dados descritos na seção anterior.
 - Navegador com WebGL para a experiência 3D. A interface dispõe de representação alternativa e controles de região fora do canvas.
 
@@ -168,9 +168,11 @@ Abra o endereço local informado pelo Vite no terminal. A página inicial, o cat
 
 | Comando | Finalidade |
 | --- | --- |
-| `npm run build` | Gerar o build da aplicação |
+| `npm run build` | Gerar o artefato Nitro/Vercel em `.vercel/output` |
+| `npm run build:local` | Gerar o servidor Nitro Node em `.output` para preview local |
 | `npm run build:dev` | Gerar o build em modo de desenvolvimento |
-| `npm run preview` | Executar a prévia local do build |
+| `npm run preview` | Executar o bundle de produção após `npm run build:local` |
+| `npm run audit:publication` | Auditar arquivos elegíveis para Git e bundles sem imprimir segredos |
 | `npm run lint` | Executar o ESLint |
 | `npm run format` | Formatar o projeto com Prettier; este comando altera arquivos |
 

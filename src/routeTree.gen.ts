@@ -10,7 +10,11 @@
 
 import { Route as rootRouteImport } from './routes/__root'
 import { Route as IndexRouteImport } from './routes/index'
+import { Route as CadastroRouteImport } from './routes/cadastro'
 import { Route as ComoFuncionaRouteImport } from './routes/como-funciona'
+import { Route as ContaRouteImport } from './routes/conta'
+import { Route as EntrarRouteImport } from './routes/entrar'
+import { Route as MinhasReservasRouteImport } from './routes/minhas-reservas'
 import { Route as SobreRouteImport } from './routes/sobre'
 import { Route as TesteBancoRouteImport } from './routes/teste-banco'
 import { Route as TesteRegioesRouteImport } from './routes/teste-regioes'
@@ -22,9 +26,29 @@ const IndexRoute = IndexRouteImport.update({
   path: '/',
   getParentRoute: () => rootRouteImport,
 } as any)
+const CadastroRoute = CadastroRouteImport.update({
+  id: '/cadastro',
+  path: '/cadastro',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const ComoFuncionaRoute = ComoFuncionaRouteImport.update({
   id: '/como-funciona',
   path: '/como-funciona',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ContaRoute = ContaRouteImport.update({
+  id: '/conta',
+  path: '/conta',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const EntrarRoute = EntrarRouteImport.update({
+  id: '/entrar',
+  path: '/entrar',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const MinhasReservasRoute = MinhasReservasRouteImport.update({
+  id: '/minhas-reservas',
+  path: '/minhas-reservas',
   getParentRoute: () => rootRouteImport,
 } as any)
 const SobreRoute = SobreRouteImport.update({
@@ -55,7 +79,11 @@ const TerrenosIdRoute = TerrenosIdRouteImport.update({
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
+  '/cadastro': typeof CadastroRoute
   '/como-funciona': typeof ComoFuncionaRoute
+  '/conta': typeof ContaRoute
+  '/entrar': typeof EntrarRoute
+  '/minhas-reservas': typeof MinhasReservasRoute
   '/sobre': typeof SobreRoute
   '/teste-banco': typeof TesteBancoRoute
   '/teste-regioes': typeof TesteRegioesRoute
@@ -64,7 +92,11 @@ export interface FileRoutesByFullPath {
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
+  '/cadastro': typeof CadastroRoute
   '/como-funciona': typeof ComoFuncionaRoute
+  '/conta': typeof ContaRoute
+  '/entrar': typeof EntrarRoute
+  '/minhas-reservas': typeof MinhasReservasRoute
   '/sobre': typeof SobreRoute
   '/teste-banco': typeof TesteBancoRoute
   '/teste-regioes': typeof TesteRegioesRoute
@@ -74,7 +106,11 @@ export interface FileRoutesByTo {
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
+  '/cadastro': typeof CadastroRoute
   '/como-funciona': typeof ComoFuncionaRoute
+  '/conta': typeof ContaRoute
+  '/entrar': typeof EntrarRoute
+  '/minhas-reservas': typeof MinhasReservasRoute
   '/sobre': typeof SobreRoute
   '/teste-banco': typeof TesteBancoRoute
   '/teste-regioes': typeof TesteRegioesRoute
@@ -85,7 +121,11 @@ export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
   fullPaths:
     | '/'
+    | '/cadastro'
     | '/como-funciona'
+    | '/conta'
+    | '/entrar'
+    | '/minhas-reservas'
     | '/sobre'
     | '/teste-banco'
     | '/teste-regioes'
@@ -94,7 +134,11 @@ export interface FileRouteTypes {
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
+    | '/cadastro'
     | '/como-funciona'
+    | '/conta'
+    | '/entrar'
+    | '/minhas-reservas'
     | '/sobre'
     | '/teste-banco'
     | '/teste-regioes'
@@ -103,7 +147,11 @@ export interface FileRouteTypes {
   id:
     | '__root__'
     | '/'
+    | '/cadastro'
     | '/como-funciona'
+    | '/conta'
+    | '/entrar'
+    | '/minhas-reservas'
     | '/sobre'
     | '/teste-banco'
     | '/teste-regioes'
@@ -113,7 +161,11 @@ export interface FileRouteTypes {
 }
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
+  CadastroRoute: typeof CadastroRoute
   ComoFuncionaRoute: typeof ComoFuncionaRoute
+  ContaRoute: typeof ContaRoute
+  EntrarRoute: typeof EntrarRoute
+  MinhasReservasRoute: typeof MinhasReservasRoute
   SobreRoute: typeof SobreRoute
   TesteBancoRoute: typeof TesteBancoRoute
   TesteRegioesRoute: typeof TesteRegioesRoute
@@ -130,11 +182,39 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof IndexRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/cadastro': {
+      id: '/cadastro'
+      path: '/cadastro'
+      fullPath: '/cadastro'
+      preLoaderRoute: typeof CadastroRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/como-funciona': {
       id: '/como-funciona'
       path: '/como-funciona'
       fullPath: '/como-funciona'
       preLoaderRoute: typeof ComoFuncionaRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/conta': {
+      id: '/conta'
+      path: '/conta'
+      fullPath: '/conta'
+      preLoaderRoute: typeof ContaRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/entrar': {
+      id: '/entrar'
+      path: '/entrar'
+      fullPath: '/entrar'
+      preLoaderRoute: typeof EntrarRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/minhas-reservas': {
+      id: '/minhas-reservas'
+      path: '/minhas-reservas'
+      fullPath: '/minhas-reservas'
+      preLoaderRoute: typeof MinhasReservasRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/sobre': {
@@ -177,7 +257,11 @@ declare module '@tanstack/react-router' {
 
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
+  CadastroRoute: CadastroRoute,
   ComoFuncionaRoute: ComoFuncionaRoute,
+  ContaRoute: ContaRoute,
+  EntrarRoute: EntrarRoute,
+  MinhasReservasRoute: MinhasReservasRoute,
   SobreRoute: SobreRoute,
   TesteBancoRoute: TesteBancoRoute,
   TesteRegioesRoute: TesteRegioesRoute,

@@ -22,6 +22,7 @@ import {
 import { TerrenoCard, TerrenoCardSkeleton } from "@/components/site/TerrenoCard";
 import { PageHeader } from "@/components/site/Layout";
 import { Link } from "@tanstack/react-router";
+import { siteMetadata } from '@/lib/site-metadata';
 
 export const Route = createFileRoute("/terrenos/")({
   validateSearch: (search: Record<string, unknown>) => {
@@ -35,14 +36,7 @@ export const Route = createFileRoute("/terrenos/")({
     return out;
   },
   head: () => ({
-    meta: [
-      { title: "Explorar Terrenos — Mars Estate" },
-      { name: "description", content: "Explore regiões de Marte no globo interativo e descubra terrenos fictícios com filtros por preço, área e disponibilidade." },
-      { property: "og:title", content: "Explorar Terrenos — Mars Estate" },
-      { property: "og:description", content: "Exploração planetária interativa com catálogo de terrenos fictícios em Marte." },
-      { property: "og:type", content: "website" },
-      { name: "twitter:card", content: "summary_large_image" },
-    ],
+    meta: siteMetadata('Explorar terrenos | Mars Estate', 'Explore regiões de Marte no globo 3D e compare terrenos fictícios por área, preço demonstrativo e paisagem. Uma experiência de portfólio.', '/terrenos'),
   }),
   loader: async () => {
     const [terrenos, regioes] = await Promise.all([listarTerrenosBanco(), listarRegioesBanco()]);

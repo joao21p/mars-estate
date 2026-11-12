@@ -8,17 +8,11 @@ import { MarsExperience } from "@/components/exploration/MarsExperience";
 import { PropertyCarousel } from "@/components/site/PropertyCarousel";
 import { Reveal } from "@/components/site/Reveal";
 import { AvisoConceitual, Steps } from "@/components/site/Steps";
+import { siteMetadata } from '@/lib/site-metadata';
 
 export const Route = createFileRoute("/")({
   head: () => ({
-    meta: [
-      { title: "Mars Estate — Seu próximo horizonte está em Marte" },
-      { name: "description", content: "Explore e reserve terrenos fictícios em Marte numa experiência de simulação imobiliária espacial." },
-      { property: "og:title", content: "Mars Estate — Seu próximo horizonte está em Marte" },
-      { property: "og:description", content: "Simulação imobiliária espacial com terrenos fictícios em Marte." },
-      { property: "og:type", content: "website" },
-      { name: "twitter:card", content: "summary_large_image" },
-    ],
+    meta: siteMetadata(),
   }),
   loader: async () => {
     const [terrenos, regioes] = await Promise.all([listarTerrenosBanco(), listarRegioesBanco()]);

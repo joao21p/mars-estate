@@ -3,17 +3,11 @@ import { createFileRoute } from "@tanstack/react-router";
 import { JornadaComoFunciona } from "@/components/site/JornadaComoFunciona";
 import { PageHeader } from "@/components/site/Layout";
 import { listarTerrenosBanco } from "@/functions/terrenos";
+import { siteMetadata } from '@/lib/site-metadata';
 
 export const Route = createFileRoute("/como-funciona")({
   head: () => ({
-    meta: [
-      { title: "Como Funciona — Mars Estate" },
-      { name: "description", content: "Percorra uma simulação interativa em quatro etapas: descubra Marte, explore regiões reais, compare terrenos fictícios e simule seu interesse." },
-      { property: "og:title", content: "Como Funciona — Mars Estate" },
-      { property: "og:description", content: "Uma jornada interativa em quatro etapas pela exploração conceitual de terrenos fictícios em Marte." },
-      { property: "og:type", content: "website" },
-      { name: "twitter:card", content: "summary_large_image" },
-    ],
+    meta: siteMetadata('Como funciona | Mars Estate', 'Conheça a jornada do Mars Estate: explore Marte, compare terrenos fictícios e experimente reservas simuladas. Sem compra ou propriedade real.', '/como-funciona'),
   }),
   loader: async () => {
     const [terrenos, regioes] = await Promise.all([listarTerrenosBanco(), listarRegioesBanco()]);

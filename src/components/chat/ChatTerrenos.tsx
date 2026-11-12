@@ -1,8 +1,10 @@
-import { useState } from "react";
+import { useRef, useState } from "react";
 import { MessageCircle } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Sheet, SheetTrigger } from "@/components/ui/sheet";
 import { ChatPanel, type MensagemChat } from "./ChatPanel";
+import { conversarMarsAI } from "@/functions/mars-ai";
+import { MAX_HISTORICO, MAX_MENSAGEM } from "@/data/mars-ai";
 
 const boasVindas: MensagemChat = {
   autor: "assistente",
@@ -14,20 +16,63 @@ export function ChatTerrenos() {
   const [aberto, setAberto] = useState(false);
   const [mensagens, setMensagens] = useState<MensagemChat[]>([boasVindas]);
   const [rascunho, setRascunho] = useState("");
+  const [enviando, setEnviando] = useState(false);
+  const ocupado = useRef(false);
+  const ultimaTentativa = useRef("");
 
-  const enviar = (texto: string) => {
+  const enviar = async (texto: string, repetir = false) => {
     const mensagem = texto.trim();
-    if (!mensagem) return;
-    setMensagens((anteriores) => [
-      ...anteriores,
-      { autor: "usuario", texto: mensagem },
-      {
-        autor: "assistente",
+    if (!mensagem || mensagem.length > MAX_MENSAGEM || ocupado.current) return;
+    ocupado.current = true;
+    ultimaTentativa.current = mensagem;
+    setEnviando(true);
+    // Keep the transport bounded independently of the visible conversation.
+    const base = repetir ? mensagens.slice(0, -2) : mensagens;
+    const historico = base
+      .filter((item) => item !== boasVindas && !item.erro)
+      .slice(-MAX_HISTORICO)
+      .map(({ autor, texto: conteudo, terrenos }) => ({
+        autor,
         texto:
-          "A integração de IA do Mars AI está em desenvolvimento. Esta interface é demonstrativa: ainda não consulto terrenos nem gero recomendações. Você pode explorar as opções no catálogo.",
-      },
+          `${conteudo.slice(0, autor === "assistente" ? 600 : 1000)}${terrenos?.length ? `\nIDs citados, na ordem: ${terrenos.map((terreno) => terreno.id).join(", ")}` : ""}`.slice(
+            0,
+            1000,
+          ),
+      }));
+    setMensagens((anteriores) => [
+      ...(repetir ? anteriores.slice(0, -2) : anteriores).slice(-39),
+      { autor: "usuario", texto: mensagem },
     ]);
-    setRascunho("");
+    if (!repetir) setRascunho("");
+    try {
+      const resposta = await conversarMarsAI({
+        data: { mensagem, historico },
+        signal: AbortSignal.timeout(35000),
+      });
+      setMensagens((anteriores) => [
+        ...anteriores,
+        {
+          autor: "assistente",
+          texto: resposta.texto,
+          terrenos: resposta.ok ? resposta.terrenos : [],
+          erro: !resposta.ok,
+          ...(resposta.ok && resposta.fontes ? { fontes: resposta.fontes } : {}),
+          ...(resposta.ok && resposta.criterios ? { criterios: resposta.criterios } : {}),
+        },
+      ]);
+    } catch {
+      setMensagens((anteriores) => [
+        ...anteriores,
+        {
+          autor: "assistente",
+          erro: true,
+          texto: "Não consegui receber a resposta do Mars AI. Tente novamente em instantes.",
+        },
+      ]);
+    } finally {
+      ocupado.current = false;
+      setEnviando(false);
+    }
   };
 
   return (
@@ -49,6 +94,8 @@ export function ChatTerrenos() {
         rascunho={rascunho}
         onRascunho={setRascunho}
         onEnviar={enviar}
+        enviando={enviando}
+        onRepetir={() => enviar(ultimaTentativa.current, true)}
       />
     </Sheet>
   );

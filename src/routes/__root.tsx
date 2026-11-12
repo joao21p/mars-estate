@@ -13,6 +13,7 @@ import { useEffect, type ReactNode } from "react";
 import { SiteShell } from "@/components/site/Layout";
 import appCss from "../styles.css?url";
 import { reportLovableError } from "../lib/lovable-error-reporting";
+import { siteMetadata } from '@/lib/site-metadata';
 
 function NotFoundComponent() {
   return (
@@ -79,10 +80,10 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
     meta: [
       { charSet: "utf-8" },
       { name: "viewport", content: "width=device-width, initial-scale=1" },
-      { title: "Mars Estate" },
-      { name: "description", content: "Explore e reserve terrenos fictícios em Marte." },
-      { property: "og:type", content: "website" },
-      { name: "twitter:card", content: "summary_large_image" },
+      ...siteMetadata(),
+      { name: 'theme-color', content: '#111014' },
+      { name: 'color-scheme', content: 'dark' },
+      { name: 'application-name', content: 'Mars Estate' },
     ],
     links: [
       {
@@ -95,7 +96,10 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
         rel: "stylesheet",
         href: "https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600&family=Syne:wght@600;700;800&display=swap",
       },
-      { rel: "icon", href: "/favicon.ico", type: "image/x-icon" },
+      { rel: 'shortcut icon', href: '/favicon.ico?v=mars-estate-1', type: 'image/x-icon' },
+      { rel: 'icon', href: '/favicon-32x32.png', type: 'image/png', sizes: '32x32' },
+      { rel: 'icon', href: '/favicon.svg', type: 'image/svg+xml', sizes: 'any' },
+      { rel: 'apple-touch-icon', href: '/apple-touch-icon.png', sizes: '180x180' },
     ],
   }),
   shellComponent: RootShell,
